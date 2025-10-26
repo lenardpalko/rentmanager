@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+
+{% block title %}Utility Bills - Rent Manager{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2 class="mb-3">
+            <i class="bi bi-file-earmark-text text-warning me-2"></i>Utility Bills
+        </h2>
+    </div>
+</div>
+
+<!-- Unpaid Bills -->
+{% if unpaid_bills %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card border-warning">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0">
+                    <i class="bi bi-exclamation-triangle me-2"></i>Unpaid Bills
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Invoice #</th>
+                                <th>Amount</th>
+                                <th>Due Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for bill in unpaid_bills %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="utility-type-icon utility-id-{{ bill.utility_type.id }} me-2">
+                                            {{ bill.utility_type.name|slice:":1" }}
+                                        </div>
+                                        {{ bill.utility_type.name }}
+                                    </div>
+                                </td>
+                                <td>{{ bill.invoice_number|default:"-" }}</td>
+                                <td><strong>{{ bill.amount }} RON</strong></td>
+                                <td>{{ bill.due_date|date:"M d, Y" }}</td>
+                                <td>
+                                    <span class="badge status-{{ bill.status }}">
+                                        {{ bill.get_status_display }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if bill.bill_file %}
+                                        <a href="{% url 'rent_app:download_bill' bill.id %}" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-download me-1"></i>Download
+                                        </a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Overdue Bills -->
+{% if overdue_bills %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-exclamation-octagon me-2"></i>Overdue Bills
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Invoice #</th>
+                                <th>Amount</th>
+                                <th>Due Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for bill in overdue_bills %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="utility-type-icon utility-id-{{ bill.utility_type.id }} me-2">
+                                            {{ bill.utility_type.name|slice:":1" }}
+                                        </div>
+                                        {{ bill.utility_type.name }}
+                                    </div>
+                                </td>
+                                <td>{{ bill.invoice_number|default:"-" }}</td>
+                                <td><strong>{{ bill.amount }} RON</strong></td>
+                                <td class="text-danger"><strong>{{ bill.due_date|date:"M d, Y" }}</strong></td>
+                                <td>
+                                    <span class="badge status-{{ bill.status }}">
+                                        {{ bill.get_status_display }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if bill.bill_file %}
+                                        <a href="{% url 'rent_app:download_bill' bill.id %}" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-download me-1"></i>Download
+                                        </a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Paid Bills History -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-check-circle me-2"></i>Payment History
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if paid_bills %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Invoice #</th>
+                                <th>Amount</th>
+                                <th>Due Date</th>
+                                <th>Status</th>
+                                <th>Paid On</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                            <tbody>
+                                {% for bill in paid_bills %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="utility-type-icon utility-id-{{ bill.utility_type.id }} me-2">
+                                                {{ bill.utility_type.name|slice:":1" }}
+                                            </div>
+                                            {{ bill.utility_type.name }}
+                                        </div>
+                                    </td>
+                                    <td>{{ bill.invoice_number|default:"-" }}</td>
+                                    <td>{{ bill.amount }} RON</td>
+                                    <td>{{ bill.due_date|date:"M d, Y" }}</td>
+                                    <td>
+                                        <span class="badge status-{{ bill.status }}">
+                                            {{ bill.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {% if bill.paid_on %}
+                                            {{ bill.paid_on|date:"M d, Y" }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if bill.bill_file %}
+                                            <a href="{% url 'rent_app:download_bill' bill.id %}" class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-download me-1"></i>Download
+                                            </a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-info-circle text-muted" style="font-size: 3rem;"></i>
+                        <p class="text-muted mt-2">No paid bills found.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- No Bills Message -->
+{% if not unpaid_bills and not overdue_bills and not paid_bills %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body text-center py-5">
+                <i class="bi bi-file-earmark-x text-muted" style="font-size: 4rem;"></i>
+                <h4 class="text-muted mt-3">No Utility Bills</h4>
+                <p class="text-muted">There are no utility bills to display at this time.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

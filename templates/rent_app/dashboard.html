@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - Rent Manager{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2 class="mb-3">
+            <i class="bi bi-speedometer2 text-primary me-2"></i>Dashboard
+        </h2>
+        <p class="text-muted">Welcome back, {{ user.get_full_name|default:user.username }}!</p>
+    </div>
+</div>
+
+<!-- Quick Stats -->
+<div class="row mb-4">
+    {% if rent_agreement %}
+    <div class="col-md-6 col-lg-3 mb-3">
+        <div class="card dashboard-card">
+            <div class="card-body text-center">
+                <div class="metric-value">{{ rent_agreement.monthly_rent_eur }}</div>
+                <div class="metric-label">EUR Monthly Rent</div>
+                <small class="text-muted">{{ rent_agreement.monthly_rent_ron }} RON</small>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="col-md-6 col-lg-3 mb-3">
+        <div class="card dashboard-card">
+            <div class="card-body text-center">
+                <div class="metric-value">{{ pending_bills_count }}</div>
+                <div class="metric-label">Pending Bills</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3 mb-3">
+        <div class="card dashboard-card">
+            <div class="card-body text-center">
+                <div class="metric-value">{{ recent_readings|length }}</div>
+                <div class="metric-label">Recent Readings</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3 mb-3">
+        <div class="card dashboard-card">
+            <div class="card-body text-center">
+                <div class="metric-value">
+                    {% for payment in recent_payments %}
+                        {% if payment.status == 'paid' and forloop.first %}✓{% endif %}
+                    {% empty %}-
+                    {% endfor %}
+                </div>
+                <div class="metric-label">Rent Status</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="row">
+    <!-- Recent Rent Payments -->
+    <div class="col-lg-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-cash-coin text-success me-2"></i>Recent Rent Payments
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if recent_payments %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Due Date</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for payment in recent_payments %}
+                                <tr>
+                                    <td>{{ payment.due_date|date:"M d, Y" }}</td>
+                                    <td>{{ payment.amount_eur }} EUR</td>
+                                    <td>
+                                        <span class="badge status-{{ payment.status }}">
+                                            {{ payment.get_status_display }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted mb-0">No recent payments found.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Bills to Pay -->
+    <div class="col-lg-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-file-earmark-text text-warning me-2"></i>Bills to Pay
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if upcoming_bills %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Due Date</th>
+                                    <th>Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for bill in upcoming_bills %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="utility-type-icon utility-id-{{ bill.utility_type.id }} me-2">
+                                                {{ bill.utility_type.name|slice:":1" }}
+                                            </div>
+                                            {{ bill.utility_type.name }}
+                                        </div>
+                                    </td>
+                                    <td>{{ bill.due_date|date:"M d, Y" }}</td>
+                                    <td>{{ bill.amount }} RON</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted mb-0">No upcoming bills.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Meter Readings -->
+{% if recent_readings %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-speedometer text-info me-2"></i>Recent Meter Readings
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Meter Type</th>
+                                <th>Reading</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for reading in recent_readings %}
+                            <tr>
+                                <td>{{ reading.meter_type.name }}</td>
+                                <td>{{ reading.reading_value }} {{ reading.meter_type.unit }}</td>
+                                <td>{{ reading.reading_date|date:"M d, Y" }}</td>
+                                <td>
+                                    {% if reading.is_processed %}
+                                        <span class="badge bg-success">Processed</span>
+                                    {% else %}
+                                        <span class="badge bg-warning">Pending</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,110 @@
+/* Custom styles for Rent Manager */
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+}
+
+.navbar-brand {
+    font-weight: 600;
+}
+
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.status-badge {
+    font-size: 0.8em;
+    padding: 0.25em 0.5em;
+}
+
+.status-unpaid {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.status-paid {
+    background-color: #28a745;
+    color: #fff;
+}
+
+.status-overdue {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+.status-pending {
+    background-color: #6c757d;
+    color: #fff;
+}
+
+.table th {
+    border-top: none;
+    font-weight: 600;
+    color: #495057;
+}
+
+.btn-primary {
+    border-radius: 25px;
+    padding: 0.5rem 1.5rem;
+}
+
+.alert {
+    border-radius: 10px;
+    border: none;
+}
+
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+/* Dashboard specific styles */
+.dashboard-card {
+    height: 100%;
+}
+
+.metric-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #0d6efd;
+}
+
+.metric-label {
+    font-size: 0.9rem;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Utility bill styles */
+.utility-type-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    background-color: #6c757d; /* Default fallback color */
+}
+
+/* Utility type icons - based on ID for consistency across translations */
+.utility-id-1 { background-color: #ffc107; } /* Electricity */
+.utility-id-2 { background-color: #dc3545; } /* Gas */
+.utility-id-3 { background-color: #0d6efd; } /* Water */
+.utility-id-4 { background-color: #28a745; } /* Internet */
+.utility-id-5 { background-color: #6f42c1; } /* Building expenses */
