@@ -21,7 +21,8 @@ WORKDIR /app
 COPY requirements.txt .
 
 # Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt gunicorn
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt gunicorn
 
 # Copy project files
 COPY . .
@@ -29,5 +30,5 @@ COPY . .
 # Create log file for cron
 RUN touch /var/log/cron.log
 
-# Start cron and Django development server (for local testing)
-CMD service cron start && python manage.py migrate && python manage.py runserver 0.0.0.0:8000
+# Start cron and Django development server
+CMD service cron start && python manage.py migrate && python manage.py collectstatic --noinput && python manage.py runserver 0.0.0.0:8000

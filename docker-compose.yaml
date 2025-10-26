@@ -6,7 +6,7 @@ services:
       - sqlite_data:/app/data
       - media_data:/app/media
     ports:
-      - "8000:8000"
+      - "8002:8000"
     env_file:
       - .env
 
