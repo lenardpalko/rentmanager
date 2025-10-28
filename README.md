@@ -55,14 +55,16 @@ docker-compose up -d
 - `ALLOWED_HOSTS`: Comma-separated list of allowed hosts
 - `CSRF_TRUSTED_ORIGINS`: Comma-separated list of trusted origins
 
+### Required for Production
+- **Cloudflare R2 Storage** (for file uploads):
+  - `R2_ACCESS_KEY_ID` - Your R2 API access key ID
+  - `R2_SECRET_ACCESS_KEY` - Your R2 API secret access key
+  - `R2_BUCKET_NAME` - Your R2 bucket name
+  - `R2_ENDPOINT_URL` - Your R2 endpoint URL (https://your-account-id.r2.cloudflarestorage.com)
+  - `R2_REGION_NAME` - Set to "auto" for R2
+  - `R2_CUSTOM_DOMAIN` - Optional custom domain for serving files
+
 ### Optional (but recommended)
-- **Cloudflare R2 Storage**:
-  - `AWS_ACCESS_KEY_ID`
-  - `AWS_SECRET_ACCESS_KEY`
-  - `AWS_STORAGE_BUCKET_NAME`
-  - `AWS_S3_ENDPOINT_URL`
-  - `AWS_S3_REGION_NAME`
-  - `AWS_S3_CUSTOM_DOMAIN`
 
 - **Email (SendGrid)**:
   - `EMAIL_HOST=smtp.sendgrid.net`
@@ -71,6 +73,36 @@ docker-compose up -d
   - `EMAIL_HOST_USER=apikey`
   - `EMAIL_HOST_PASSWORD=your-sendgrid-api-key`
   - `DEFAULT_FROM_EMAIL=noreply@rentmanager.palko.app`
+
+## Cloudflare R2 Setup
+
+For production deployment, you need to configure Cloudflare R2 for file storage:
+
+1. **Create R2 Bucket**:
+   - Go to Cloudflare Dashboard → R2 Object Storage
+   - Create a new bucket
+   - Note the bucket name
+
+2. **Create API Token**:
+   - Go to R2 → Manage R2 API tokens
+   - Create a new API token with appropriate permissions
+   - Note the Access Key ID and Secret Access Key
+
+3. **Get Endpoint URL**:
+   - Your endpoint URL format: `https://your-account-id.r2.cloudflarestorage.com`
+   - Find your account ID in Cloudflare Dashboard → Right sidebar
+
+4. **Configure Environment**:
+   - Update your `.env` file with the R2 credentials:
+     ```env
+     R2_ACCESS_KEY_ID=your-r2-access-key-id
+     R2_SECRET_ACCESS_KEY=your-r2-secret-access-key
+     R2_BUCKET_NAME=your-bucket-name
+     R2_ENDPOINT_URL=https://your-account-id.r2.cloudflarestorage.com
+     R2_REGION_NAME=auto
+     R2_CUSTOM_DOMAIN=your-custom-domain.com  # Optional
+     ```
+   - Files will automatically be stored in R2 instead of local storage
 
 ## Initial Data Setup
 

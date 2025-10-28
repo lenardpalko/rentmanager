@@ -103,12 +103,21 @@ if not DEBUG:
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Cloudflare R2 Storage settings
-AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
-AWS_S3_ENDPOINT_URL = os.getenv('AWS_S3_ENDPOINT_URL')
-AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME')
-AWS_S3_CUSTOM_DOMAIN = os.getenv('AWS_S3_CUSTOM_DOMAIN')
+# R2 uses S3-compatible API, so we use django-storages S3 backend
+R2_ACCESS_KEY_ID = os.getenv('R2_ACCESS_KEY_ID')
+R2_SECRET_ACCESS_KEY = os.getenv('R2_SECRET_ACCESS_KEY')
+R2_BUCKET_NAME = os.getenv('R2_BUCKET_NAME')
+R2_ENDPOINT_URL = os.getenv('R2_ENDPOINT_URL')
+R2_REGION_NAME = os.getenv('R2_REGION_NAME', 'auto')
+R2_CUSTOM_DOMAIN = os.getenv('R2_CUSTOM_DOMAIN')
+
+# Map R2 settings to S3-compatible settings for django-storages
+AWS_ACCESS_KEY_ID = R2_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY = R2_SECRET_ACCESS_KEY
+AWS_STORAGE_BUCKET_NAME = R2_BUCKET_NAME
+AWS_S3_ENDPOINT_URL = R2_ENDPOINT_URL
+AWS_S3_REGION_NAME = R2_REGION_NAME
+AWS_S3_CUSTOM_DOMAIN = R2_CUSTOM_DOMAIN
 AWS_DEFAULT_ACL = 'public-read'
 AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',
@@ -116,13 +125,18 @@ AWS_S3_OBJECT_PARAMETERS = {
 
 # Use Cloudflare R2 for media files if configured
 if all([
-    AWS_ACCESS_KEY_ID,
-    AWS_SECRET_ACCESS_KEY,
-    AWS_STORAGE_BUCKET_NAME,
-    AWS_S3_ENDPOINT_URL
+    R2_ACCESS_KEY_ID,
+    R2_SECRET_ACCESS_KEY,
+    R2_BUCKET_NAME,
+    R2_ENDPOINT_URL
 ]):
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
     AWS_LOCATION = 'media'
+    # Override MEDIA_URL to use R2 custom domain if available
+    if R2_CUSTOM_DOMAIN:
+        MEDIA_URL = f'https://{R2_CUSTOM_DOMAIN}/media/'
+    else:
+        MEDIA_URL = f'{R2_ENDPOINT_URL}/{R2_BUCKET_NAME}/media/'
 else:
     # Fallback to local storage
     pass
