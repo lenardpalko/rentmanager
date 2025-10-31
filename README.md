@@ -73,6 +73,8 @@ docker-compose up -d
   - `EMAIL_HOST_USER=apikey`
   - `EMAIL_HOST_PASSWORD=your-sendgrid-api-key`
   - `DEFAULT_FROM_EMAIL=noreply@rentmanager.palko.app`
+  - `ADMIN_NAME=Admin Name`
+  - `ADMIN_EMAIL=admin@yourdomain.com`
 
 ## Cloudflare R2 Setup
 

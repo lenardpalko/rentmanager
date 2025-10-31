@@ -150,6 +150,11 @@ EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@rentmanager.palko.app')
 
+# Admin notifications
+ADMIN_NAME = os.getenv('ADMIN_NAME')
+ADMIN_EMAIL = os.getenv('ADMIN_EMAIL')
+ADMINS = [(ADMIN_NAME, ADMIN_EMAIL)] if ADMIN_NAME and ADMIN_EMAIL else []
+
 # Crispy Forms
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
